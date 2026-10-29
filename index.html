@@ -109,13 +109,21 @@ src="https://www.facebook.com/tr?id=1913650232766808&ev=PageView&noscript=1"/></
   var btn = document.getElementById("entrar");
   btn.href = WHATSAPP_GROUP_URL;
 
+  var leadSent = false;
+  function sendLead() {
+    if (leadSent) return;
+    leadSent = true;
+    try { fbq("track", "Lead"); } catch (err) {}
+  }
+
+  // Dispara o Lead assim que o dedo/mouse toca no botão, dando mais tempo ao pixel
+  btn.addEventListener("pointerdown", sendLead);
+
   btn.addEventListener("click", function (e) {
     e.preventDefault();
-    var go = false;
-    function redirect() { if (!go) { go = true; window.location.href = WHATSAPP_GROUP_URL; } }
-    try { fbq("track", "Lead"); } catch (err) {}
-    // Pequena espera para o pixel disparar antes de sair da página
-    setTimeout(redirect, 400);
+    sendLead();
+    // Espera o pixel enviar o evento antes de sair da página
+    setTimeout(function () { window.location.href = WHATSAPP_GROUP_URL; }, 800);
   });
 </script>
 </body>
